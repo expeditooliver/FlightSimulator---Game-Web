@@ -2,12 +2,12 @@ param(
   [ValidateSet("DEV","PROD")]
   [string]$Mode = "DEV",
   [int]$Port = $(if ($env:PORT) { [int]$env:PORT } else { 5000 }),
-  [string]$Host = $(if ($env:HOST) { $env:HOST } else { "127.0.0.1" })
+  [string]$ServerHost = $(if ($env:HOST) { $env:HOST } else { "127.0.0.1" })
 )
 
 Write-Host "==============================================="
 Write-Host "  ✈️  FlightSimulator --- Game Web (Windows)" -ForegroundColor Cyan
-Write-Host "  Modo: $Mode | HOST=$Host PORT=$Port"
+Write-Host "  Modo: $Mode | HOST=$ServerHost PORT=$Port"
 Write-Host "==============================================="
 
 # Verificar Node
@@ -34,18 +34,18 @@ if (-not (Test-Path "node_modules")) {
 }
 
 $env:PORT = $Port.ToString()
-$env:HOST = $Host
+$env:HOST = $ServerHost
 
 if ($Mode -eq "DEV") {
-  Write-Host "[DEV] Iniciando servidor de desenvolvimento em http://$Host:$Port" -ForegroundColor Green
-  Start-Process "$PSHOME\powershell.exe" -ArgumentList "-NoLogo -NoProfile -Command Start-Sleep -Seconds 3; Start 'http://$Host:$Port'" | Out-Null
+  Write-Host "[DEV] Iniciando servidor de desenvolvimento em http://$ServerHost:$Port" -ForegroundColor Green
+  Start-Process "$PSHOME\powershell.exe" -ArgumentList "-NoLogo -NoProfile -Command Start-Sleep -Seconds 3; Start 'http://$ServerHost:$Port'" | Out-Null
   & npm.cmd run dev
 } else {
   Write-Host "[PROD] Gerando build de produção..." -ForegroundColor Green
   & npm.cmd run build
   if ($LASTEXITCODE -ne 0) { Write-Host "[ERRO] Falha no build." -ForegroundColor Red; exit 1 }
-  Write-Host "[PROD] Iniciando preview em http://$Host:$Port" -ForegroundColor Green
-  Start-Process "$PSHOME\powershell.exe" -ArgumentList "-NoLogo -NoProfile -Command Start-Sleep -Seconds 2; Start 'http://$Host:$Port'" | Out-Null
+  Write-Host "[PROD] Iniciando preview em http://$ServerHost:$Port" -ForegroundColor Green
+  Start-Process "$PSHOME\powershell.exe" -ArgumentList "-NoLogo -NoProfile -Command Start-Sleep -Seconds 2; Start 'http://$ServerHost:$Port'" | Out-Null
   & npm.cmd run preview
 }
 
