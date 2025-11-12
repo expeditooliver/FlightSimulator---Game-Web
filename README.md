@@ -95,6 +95,26 @@ Passos:
 
 > Tudo é pensado para manter performance alta e sensação de controle. 🌤️
 
+## 📸 Screenshots
+As imagens abaixo ilustram a experiência do simulador. Os arquivos são mantidos em `docs/screenshots/` e podem ser atualizados a qualquer momento.
+
+<p align="center">
+  <strong>Tela Inicial</strong><br/>
+  <img alt="Flight Simulator - Landing" src="docs/screenshots/landing.png" width="900" />
+</p>
+
+<p align="center">
+  <strong>Controles e Dicas de Voo</strong><br/>
+  <img alt="Flight Simulator - Controls" src="docs/screenshots/controls.png" width="900" />
+</p>
+
+<p align="center">
+  <strong>Vista em Perseguição</strong><br/>
+  <img alt="Flight Simulator - Inflight Chase View" src="docs/screenshots/inflight.png" width="900" />
+</p>
+
+> Para atualizar as imagens, substitua os arquivos em `docs/screenshots/` pelos novos PNG/JPG e faça um commit.
+
 ## 🎨 Estilo e Cores
 - Tailwind com tema estendido (`tailwind.config.ts`), incluindo cores `primary`, `accent`, `foreground`, etc.
 - Componentes Radix estilizados para tooltips, diálogos, menus e muito mais.
@@ -112,6 +132,10 @@ Passos:
 ## 🤝 Contribuição
 - Faça um fork e abra uma PR com uma descrição clara.
 - Sugestões de novos controles, HUDs, câmeras e cenários são super bem‑vindas! 💡
+
+### Atualização de README e Mídia
+- Screenshots residem em `docs/screenshots/` (`landing.png`, `controls.png`, `inflight.png`).
+- Ao alterar nomes, ajuste os caminhos na seção "📸 Screenshots" acima.
 
 ## 📜 Licença
 Este projeto está sob licença MIT. Sinta‑se livre para usar e modificar. 💚
