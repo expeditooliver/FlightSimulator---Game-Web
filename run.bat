@@ -31,7 +31,7 @@ IF ERRORLEVEL 1 (
   goto :end
 )
 
-npm --version >nul 2>&1
+call npm.cmd -v >nul 2>&1
 IF ERRORLEVEL 1 (
   echo [ERRO] npm nao encontrado. Instale Node.js (inclui npm).
   goto :end
@@ -47,11 +47,8 @@ IF NOT EXIST "node_modules" (
   )
 )
 
-echo [D] Desenvolvimento (Vite + Express em http://%HOST%:%PORT%)
-echo [P] Producao     (build + start em http://%HOST%:%PORT%)
-CHOICE /C DP /N /M "Escolha o modo [D/P]: "
-IF ERRORLEVEL 2 goto prod
-IF ERRORLEVEL 1 goto dev
+REM Sem argumentos, por padrao inicia em DEV
+goto dev
 
 :dev
 echo.
