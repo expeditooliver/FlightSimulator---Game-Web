@@ -1,73 +1,99 @@
 import { Canvas } from "@react-three/fiber";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { KeyboardControls } from "@react-three/drei";
-// import { useAudio } from "./lib/stores/useAudio";
 import "@fontsource/inter";
+import { useFlight } from "./lib/stores/useFlight";
+import { Aircraft } from "./components/Aircraft";
+import { Environment } from "./components/Environment";
+import { FlightCamera } from "./components/FlightCamera";
+import { HUD } from "./components/HUD";
+import { MainMenu } from "./components/MainMenu";
+import { Tutorial } from "./components/Tutorial";
 
-// Import our game components
+enum Controls {
+  pitchUp = "pitchUp",
+  pitchDown = "pitchDown",
+  rollLeft = "rollLeft",
+  rollRight = "rollRight",
+  yawLeft = "yawLeft",
+  yawRight = "yawRight",
+  throttleUp = "throttleUp",
+  throttleDown = "throttleDown",
+}
 
-// Define control keys for the game
-// const controls = [
-//   { name: "forward", keys: ["KeyW", "ArrowUp"] },
-//   { name: "backward", keys: ["KeyS", "ArrowDown"] },
-//   { name: "leftward", keys: ["KeyA", "ArrowLeft"] },
-//   { name: "rightward", keys: ["KeyD", "ArrowRight"] },
-//   { name: "punch", keys: ["KeyJ"] },
-//   { name: "kick", keys: ["KeyK"] },
-//   { name: "block", keys: ["KeyL"] },
-//   { name: "special", keys: ["Space"] },
-// ];
+const keyMap = [
+  { name: Controls.pitchUp, keys: ["KeyW", "ArrowUp"] },
+  { name: Controls.pitchDown, keys: ["KeyS", "ArrowDown"] },
+  { name: Controls.rollLeft, keys: ["KeyA", "ArrowLeft"] },
+  { name: Controls.rollRight, keys: ["KeyD", "ArrowRight"] },
+  { name: Controls.yawLeft, keys: ["KeyQ"] },
+  { name: Controls.yawRight, keys: ["KeyE"] },
+  { name: Controls.throttleUp, keys: ["ShiftLeft", "ShiftRight"] },
+  { name: Controls.throttleDown, keys: ["ControlLeft", "ControlRight"] },
+];
 
-// Main App component
-function App() {
-  //const { gamePhase } = useFighting();
-  const [showCanvas, setShowCanvas] = useState(false);
-
-  // Show the canvas once everything is loaded
+function FlightSimulator() {
+  const phase = useFlight((state) => state.phase);
+  const setCameraMode = useFlight((state) => state.setCameraMode);
+  const toggleTutorial = useFlight((state) => state.toggleTutorial);
+  
   useEffect(() => {
-    setShowCanvas(true);
-  }, []);
-
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
+        toggleTutorial();
+      } else if (e.key === "1") {
+        setCameraMode("chase");
+      } else if (e.key === "2") {
+        setCameraMode("cockpit");
+      } else if (e.key === "3") {
+        setCameraMode("external");
+      }
+    };
+    
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setCameraMode, toggleTutorial]);
+  
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden' }}/>
-    // {showCanvas && (
-    //   <KeyboardControls map={controls}>
-    //     {gamePhase === 'menu' && <Menu />}
+    <div style={{ width: "100vw", height: "100vh", position: "relative", overflow: "hidden" }}>
+      {phase === "menu" && <MainMenu />}
+      
+      {phase === "flying" && (
+        <>
+          <Canvas
+            shadows
+            camera={{
+              position: [0, 10, 20],
+              fov: 60,
+              near: 0.1,
+              far: 2000,
+            }}
+            gl={{
+              antialias: true,
+              powerPreference: "high-performance",
+            }}
+          >
+            <Suspense fallback={null}>
+              <Environment />
+              <Aircraft />
+              <FlightCamera />
+            </Suspense>
+          </Canvas>
+          
+          <HUD />
+          <Tutorial />
+        </>
+      )}
+    </div>
+  );
+}
 
-    //     {gamePhase === 'character_selection' && <CharacterSelection />}
-
-    //     {(gamePhase === 'fighting' || gamePhase === 'round_end' || gamePhase === 'match_end') && (
-    //       <>
-    //         <Canvas
-    //           shadows
-    //           camera={{
-    //             position: [0, 2, 8],
-    //             fov: 45,
-    //             near: 0.1,
-    //             far: 1000
-    //           }}
-    //           gl={{
-    //             antialias: true,
-    //             powerPreference: "default"
-    //           }}
-    //         >
-    //           <color attach="background" args={["#111111"]} />
-
-    //           {/* Lighting */}
-    //           <Lights />
-
-    //           <Suspense fallback={null}>
-    //           </Suspense>
-    //         </Canvas>
-    //         <GameUI />
-    //       </>
-    //     )}
-
-    //     <ShortcutManager />
-    //     <SoundManager />
-    //   </KeyboardControls>
-    // )}
-    //</div>
+function App() {
+  return (
+    <KeyboardControls map={keyMap}>
+      <FlightSimulator />
+    </KeyboardControls>
   );
 }
 
