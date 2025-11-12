@@ -8,6 +8,17 @@ echo   Selecione o modo de execução
 echo ================================================
 echo.
 
+REM Se um argumento foi passado, usar para selecionar modo
+REM Suporta: D, DEV, --dev, P, PROD, --prod
+IF NOT "%~1"=="" (
+  IF /I "%~1"=="D"      goto dev
+  IF /I "%~1"=="DEV"    goto dev
+  IF /I "%~1"=="--DEV"  goto dev
+  IF /I "%~1"=="P"      goto prod
+  IF /I "%~1"=="PROD"   goto prod
+  IF /I "%~1"=="--PROD" goto prod
+)
+
 REM Verificar Node e npm
 node --version >nul 2>&1
 IF ERRORLEVEL 1 (
